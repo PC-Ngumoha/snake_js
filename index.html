@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake</title>
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    canvas {
+      background: #9BBC0F;
+      display: block;
+      margin: 10px auto;
+    }
+  </style>
+
+</head>
+
+<body>
+  <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+  <script>
+    const SNAKE_COLOR = "#306230";
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    let x = 0;
+    // let y = 10;
+    const seg_height = 10;
+    const seg_width = 30;
+    const segments = 3;
+    const snake = [];
+
+    // Populate snake body.
+    for (let i = 0; i < segments; i++) {
+      snake[i] = { x: seg_width * i, y: 10 };
+    }
+
+    function draw () {
+      for (let i = 0; i < segments; i++) {
+        ctx.beginPath();
+        ctx.rect(snake[i].x, snake[i].y, seg_width, seg_height);
+        ctx.fillStyle = SNAKE_COLOR;
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+
+    draw();
+  </script>
+</body>
+
+</html>
