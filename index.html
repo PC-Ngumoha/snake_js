@@ -40,9 +40,10 @@
     let y = 10;
     // const vel = 2;
     const seg_height = 10;
-    const seg_width = 30;
-    const segments = 3;
+    const seg_width = 10;
+    const segments = 5;
     const snake = [];
+    let direction = { up: false, right: true, down: false, left: false };
 
     // Populate snake body.
     for (let i = 0; i < segments; i++) {
@@ -51,7 +52,7 @@
 
     // draw snake
     function drawSnake () {
-      for (let i = 0; i < segments; i++) {
+      for (let i = 0; i < snake.length; i++) {
         ctx.beginPath();
         ctx.rect(snake[i].x, snake[i].y, seg_width, seg_height);
         ctx.fillStyle = i === segments - 1 ? "red" : SNAKE_COLOR;
@@ -65,18 +66,40 @@
       drawSnake();
 
 
-      for (let i = 0; i < segments - 1; i++) {
+      // move snake based on direction
+      for (let i = 0; i < snake.length - 1; i++) {
         snake[i].x = snake[i + 1].x;
         snake[i].y = snake[i + 1].y;
       }
       // console.log(snake);
-      snake[segments - 1].x += seg_width;
+      // snake[segments - 1].x += seg_width;
+
+      if (direction.up) {
+        snake[snake.length - 1].y -= seg_height;
+      } else if (direction.right) {
+        snake[snake.length - 1].x += seg_width;
+      } else if (direction.down) {
+        snake[snake.length - 1].y += seg_height;
+      } else if (direction.left) {
+        snake[snake.length - 1].x -= seg_width;
+      }
     }
 
-    document.addEventListener("keypress", function (evt) {
+    document.addEventListener("keydown", function (evt) {
+      evt.preventDefault();
       if (evt.key === 'Enter') {
         setInterval(draw, 100);
+      } else if (evt.key === 'Up' || evt.key === 'ArrowUp') {
+        direction = { up: true, right: false, down: false, left: false };
+      } else if (evt.key === 'Right' || evt.key === 'ArrowRight') {
+        direction = { up: false, right: true, down: false, left: false };
+      } else if (evt.key === 'Down' || evt.key === 'ArrowDown') {
+        direction = { up: false, right: false, down: true, left: false };
+      } else if (evt.key === 'Left' || evt.key === 'ArrowLeft') {
+        direction = { up: false, right: false, down: false, left: true };
       }
+
+      // console.log(direction);
     })
   </script>
 </body>
