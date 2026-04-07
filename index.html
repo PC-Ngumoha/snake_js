@@ -42,7 +42,7 @@
     const seg_height = 10;
     const seg_width = 10;
     const fruit_radius = 5;
-    const segments = 5;
+    const segments = 20;
     const snake = [];
     let direction = { up: false, right: true, down: false, left: false };
     let game;
@@ -92,6 +92,21 @@
         || head.x > canvas.width
         || head.y < 0 - seg_height
         || head.y > canvas.height;
+    }
+
+    //TODO: detect collision with tail
+    function collidedWithSelf () {
+      for (let i = 0; i < snake.length - 1; i++) {
+        if (
+          head.x + seg_width === snake[i].x
+          && snake[i].x + seg_width === head.x
+          && head.y + seg_height === snake[i].y
+          && snake[i].y + seg_height === head.y
+        ) {
+          return true;
+        }
+      }
+      return false;
     }
 
     function drawFruit (x, y) {
