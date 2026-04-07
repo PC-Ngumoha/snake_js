@@ -61,7 +61,7 @@
       for (let i = 0; i < snake.length; i++) {
         ctx.beginPath();
         ctx.rect(snake[i].x, snake[i].y, seg_width, seg_height);
-        ctx.fillStyle = i === segments - 1 ? "red" : SNAKE_COLOR;
+        ctx.fillStyle = i === snake.length - 1 ? "red" : SNAKE_COLOR;
         ctx.fill();
         ctx.closePath();
       }
@@ -74,8 +74,6 @@
         snake[i].x = snake[i + 1].x;
         snake[i].y = snake[i + 1].y;
       }
-      // console.log(snake);
-      // snake[segments - 1].x += seg_width;
 
       if (direction.up) {
         head.y -= seg_height;
@@ -89,18 +87,11 @@
     }
 
     // detect Collision With Wall
-    function detectCollisionWithWall () {
-      if (
-        head.x < 0 - seg_width
+    function collidedWithWall () {
+      return head.x < 0 - seg_width
         || head.x > canvas.width
         || head.y < 0 - seg_height
-        || head.y > canvas.height
-      ) {
-        // Game over
-        clearInterval(game);
-        document.location.reload();
-        alert("GAME OVER !!!");
-      }
+        || head.y > canvas.height;
     }
 
     function drawFruit (x, y) {
@@ -118,16 +109,30 @@
         && fruitY + fruit_radius >= head.y
     }
 
+    function addSegment () {
+      const lastX = snake[0].x;
+      const lastY = snake[0].y;
+      const new_segment = { x: lastX, y: lastY };
+      snake.unshift(new_segment);
+    }
+
     function draw () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawSnake();
       moveSnake();
       drawFruit(fruitX, fruitY);
-      detectCollisionWithWall();
 
       if (collidedWithFruit()) {
+        addSegment();
         fruitX = Math.floor(Math.random() * canvas.width);
         fruitY = Math.floor(Math.random() * canvas.height);
+      }
+
+      // Game Over
+      if (collidedWithWall()) {
+        clearInterval(game);
+        document.location.reload();
+        alert("GAME OVER !!!");
       }
 
     }
