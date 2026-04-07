@@ -44,11 +44,14 @@
     const segments = 5;
     const snake = [];
     let direction = { up: false, right: true, down: false, left: false };
+    let game;
 
     // Populate snake body.
     for (let i = 0; i < segments; i++) {
       snake[i] = { x: seg_width * i, y };
     }
+
+    const head = snake[snake.length - 1];
 
     // draw snake
     function drawSnake () {
@@ -61,11 +64,8 @@
       }
     }
 
-    function draw () {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawSnake();
-
-
+    // move snake
+    function moveSnake () {
       // move snake based on direction
       for (let i = 0; i < snake.length - 1; i++) {
         snake[i].x = snake[i + 1].x;
@@ -75,27 +75,50 @@
       // snake[segments - 1].x += seg_width;
 
       if (direction.up) {
-        snake[snake.length - 1].y -= seg_height;
+        head.y -= seg_height;
       } else if (direction.right) {
-        snake[snake.length - 1].x += seg_width;
+        head.x += seg_width;
       } else if (direction.down) {
-        snake[snake.length - 1].y += seg_height;
+        head.y += seg_height;
       } else if (direction.left) {
-        snake[snake.length - 1].x -= seg_width;
+        head.x -= seg_width;
       }
+    }
+
+    // detect Collision With Wall
+    function detectCollisionWithWall () {
+      if (
+        head.x < 0 - seg_width
+        || head.x > canvas.width
+        || head.y < 0 - seg_height
+        || head.y > canvas.height
+      ) {
+        // Game over
+        clearInterval(game);
+        document.location.reload();
+        alert("GAME OVER !!!");
+      }
+    }
+
+    function draw () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawSnake();
+      moveSnake();
+      detectCollisionWithWall();
+
     }
 
     document.addEventListener("keydown", function (evt) {
       evt.preventDefault();
       if (evt.key === 'Enter') {
-        setInterval(draw, 100);
-      } else if (evt.key === 'Up' || evt.key === 'ArrowUp') {
+        game = setInterval(draw, 100);
+      } else if (evt.key === 'Up' || evt.key === 'ArrowUp' && !direction.down) {
         direction = { up: true, right: false, down: false, left: false };
-      } else if (evt.key === 'Right' || evt.key === 'ArrowRight') {
+      } else if (evt.key === 'Right' || evt.key === 'ArrowRight' && !direction.left) {
         direction = { up: false, right: true, down: false, left: false };
-      } else if (evt.key === 'Down' || evt.key === 'ArrowDown') {
+      } else if (evt.key === 'Down' || evt.key === 'ArrowDown' && !direction.up) {
         direction = { up: false, right: false, down: true, left: false };
-      } else if (evt.key === 'Left' || evt.key === 'ArrowLeft') {
+      } else if (evt.key === 'Left' || evt.key === 'ArrowLeft' && !direction.right) {
         direction = { up: false, right: false, down: false, left: true };
       }
 
