@@ -41,10 +41,13 @@
     // const vel = 2;
     const seg_height = 10;
     const seg_width = 10;
+    const fruit_radius = 5;
     const segments = 5;
     const snake = [];
     let direction = { up: false, right: true, down: false, left: false };
     let game;
+    let fruitX = Math.floor(Math.random() * canvas.width);
+    let fruitY = Math.floor(Math.random() * canvas.height);
 
     // Populate snake body.
     for (let i = 0; i < segments; i++) {
@@ -100,11 +103,32 @@
       }
     }
 
+    function drawFruit (x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, fruit_radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function collidedWithFruit () {
+      return head.x + seg_width >= fruitX
+        && fruitX + fruit_radius >= head.x
+        && head.y + seg_height >= fruitY
+        && fruitY + fruit_radius >= head.y
+    }
+
     function draw () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawSnake();
       moveSnake();
+      drawFruit(fruitX, fruitY);
       detectCollisionWithWall();
+
+      if (collidedWithFruit()) {
+        fruitX = Math.floor(Math.random() * canvas.width);
+        fruitY = Math.floor(Math.random() * canvas.height);
+      }
 
     }
 
