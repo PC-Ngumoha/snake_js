@@ -88,23 +88,27 @@
 
     // detect Collision With Wall
     function collidedWithWall () {
-      return head.x < 0 - seg_width
-        || head.x > canvas.width
-        || head.y < 0 - seg_height
-        || head.y > canvas.height;
+      return head.x < 0
+        || head.x > canvas.width - seg_width
+        || head.y < 0
+        || head.y > canvas.height - seg_height;
     }
 
-    //TODO: detect collision with tail
+    //detect collision with tail
     function collidedWithSelf () {
       for (let i = 0; i < snake.length - 1; i++) {
         if (
-          head.x + seg_width === snake[i].x
-          && snake[i].x + seg_width === head.x
-          && head.y + seg_height === snake[i].y
-          && snake[i].y + seg_height === head.y
+          head.x === snake[i].x && head.y === snake[i].y
         ) {
           return true;
         }
+
+        // console.log(head.x + seg_width === snake[i].x
+        //   && snake[i].x + seg_width === head.x
+        //   && head.y + seg_height === snake[i].y
+        //   && snake[i].y + seg_height === head.y);
+
+        // console.log();
       }
       return false;
     }
@@ -131,10 +135,11 @@
       snake.unshift(new_segment);
     }
 
+    // FIXME: Bug with collision detection and movement.
     function draw () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       drawSnake();
-      moveSnake();
       drawFruit(fruitX, fruitY);
 
       if (collidedWithFruit()) {
@@ -144,12 +149,13 @@
       }
 
       // Game Over
-      if (collidedWithWall()) {
+      if (collidedWithWall() || collidedWithSelf()) {
         clearInterval(game);
         document.location.reload();
         alert("GAME OVER !!!");
       }
 
+      moveSnake();
     }
 
     document.addEventListener("keydown", function (evt) {
