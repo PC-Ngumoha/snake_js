@@ -48,6 +48,7 @@
     let game;
     let fruitX = Math.floor(Math.random() * canvas.width);
     let fruitY = Math.floor(Math.random() * canvas.height);
+    let score = 0;
 
     // Populate snake body.
     for (let i = 0; i < segments; i++) {
@@ -135,15 +136,26 @@
       snake.unshift(new_segment);
     }
 
+    function drawScore () {
+      ctx.beginPath();
+      ctx.font = "20px Comic Sans MS";
+      ctx.fillStyle = SNAKE_COLOR;
+      ctx.fillText(`Score: ${score}`, 30, 30);
+      ctx.closePath();
+    }
+
     // FIXME: Bug with collision detection and movement.
     function draw () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      moveSnake();
+      drawScore();
       drawSnake();
       drawFruit(fruitX, fruitY);
 
       if (collidedWithFruit()) {
         addSegment();
+        score++;
         fruitX = Math.floor(Math.random() * canvas.width);
         fruitY = Math.floor(Math.random() * canvas.height);
       }
@@ -151,11 +163,10 @@
       // Game Over
       if (collidedWithWall() || collidedWithSelf()) {
         clearInterval(game);
-        document.location.reload();
         alert("GAME OVER !!!");
+        document.location.reload();
       }
 
-      moveSnake();
     }
 
     document.addEventListener("keydown", function (evt) {
