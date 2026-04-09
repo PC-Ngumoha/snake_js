@@ -38,7 +38,6 @@
     const ctx = canvas.getContext("2d");
     let x = 0;
     let y = 10;
-    // const vel = 2;
     const seg_height = 10;
     const seg_width = 10;
     const fruit_radius = 5;
@@ -49,6 +48,7 @@
     let fruitX = Math.floor(Math.random() * canvas.width);
     let fruitY = Math.floor(Math.random() * canvas.height);
     let score = 0;
+    const highscore = getHighScore() ?? 0;
 
     // Populate snake body.
     for (let i = 0; i < segments; i++) {
@@ -56,6 +56,14 @@
     }
 
     const head = snake[snake.length - 1];
+
+    function getHighScore () {
+      return Number(window.localStorage.getItem("highscore"));
+    }
+
+    function setHighScore (value) {
+      window.localStorage.setItem("highscore", String(value));
+    }
 
     // draw snake
     function drawSnake () {
@@ -103,13 +111,6 @@
         ) {
           return true;
         }
-
-        // console.log(head.x + seg_width === snake[i].x
-        //   && snake[i].x + seg_width === head.x
-        //   && head.y + seg_height === snake[i].y
-        //   && snake[i].y + seg_height === head.y);
-
-        // console.log();
       }
       return false;
     }
@@ -144,12 +145,21 @@
       ctx.closePath();
     }
 
+    function drawHighscore () {
+      ctx.beginPath();
+      ctx.font = "20px Comic Sans MS";
+      ctx.fillStyle = SNAKE_COLOR;
+      ctx.fillText(`High Score: ${highscore}`, 30, 70);
+      ctx.closePath();
+    }
+
     // FIXME: Bug with collision detection and movement.
     function draw () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       moveSnake();
       drawScore();
+      drawHighscore();
       drawSnake();
       drawFruit(fruitX, fruitY);
 
@@ -165,6 +175,9 @@
         clearInterval(game);
         alert("GAME OVER !!!");
         document.location.reload();
+        if (highscore < score) {
+          setHighScore(score);
+        }
       }
 
     }
@@ -182,8 +195,6 @@
       } else if (evt.key === 'Left' || evt.key === 'ArrowLeft' && !direction.right) {
         direction = { up: false, right: false, down: false, left: true };
       }
-
-      // console.log(direction);
     })
   </script>
 </body>
